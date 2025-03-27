@@ -25,13 +25,12 @@ func tryKey(user string, address string, keyPath string) (*ssh.Client, error) {
 		return nil, fmt.Errorf("unable to parse private key %s: %w", keyPath, err)
 	}
 
-	// SSH client configuration
 	config := &ssh.ClientConfig{
 		User: user,
 		Auth: []ssh.AuthMethod{
 			ssh.PublicKeys(signer),
 		},
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(), // WARNING: Insecure.  Replace with proper host key verification.
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 	}
 
 	conn, err := ssh.Dial("tcp", address, config)

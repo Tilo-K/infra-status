@@ -30,13 +30,32 @@ func ExecuteCommand(conn *ssh.Client, command string) (stdout string, stderr str
 	return stdout, stderr, err
 }
 
+func DetermineOS(conn *ssh.Client) (string, error) {
+	stdout, stderr, err := ExecuteCommand(conn, "uname -s")
+	if stderr != "" {
+		return "Windows", err
+	}
+	return stdout, err
+}
+
 func GetUptimeForServer(username string, address string) {
 	conn, err := ConnectWithKey(username, address)
 	if err != nil {
 		log.Error("Could not connect to server", "Username", username, "Address", address, "Error", err)
 	}
 
-	stdout, stderr, err := ExecuteCommand(conn, "uptime")
+	hostSystem, err := DetermineOS(conn)
+	if err != nil {
+		log.Error("Could not determine OS", "Error", err)
+		return
+	}
+
+	command := "uptime"
+	if hostSystem == "Windows" {
+		command = "systeminfo | findstr /i \"System Boot Time\""
+	}
+
+	stdout, stderr, err := ExecuteCommand(conn, command)
 	if err != nil {
 		log.Error("Could not get uptime", "Error", err)
 		return
