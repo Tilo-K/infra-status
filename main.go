@@ -16,7 +16,7 @@ import (
 func main() {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		_ = fmt.Errorf("Could not find home dir")
+		_ = fmt.Errorf("could not find home dir")
 		homeDir = "/"
 	}
 
