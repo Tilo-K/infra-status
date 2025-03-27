@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/log"
 
 	"tilok.dev/infra-status/config"
+	"tilok.dev/infra-status/remote_server"
 )
 
 func main() {
@@ -33,4 +34,7 @@ func main() {
 	}
 
 	fmt.Println(config)
+	for _, server := range config.RemoteServer {
+		remote_server.GetUptimeForServer(server.Username, server.Host)
+	}
 }
